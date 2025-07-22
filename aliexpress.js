@@ -44,12 +44,16 @@ const page = context.pages().length ? context.pages()[0] : await context.newPage
 const auth = async url => {
   console.log('auth', url);
   await page.goto(url, { waitUntil: 'domcontentloaded' });
-  // redirects to https://login.aliexpress.com/?return_url=https%3A%2F%2Fwww.aliexpress.com%2Fp%2Fcoin-pc-index%2Findex.html
-  await Promise.any([page.waitForURL(/.*login\.aliexpress.com.*/).then(async () => {
-    // manual login
+  // no longer redirects if not authed, but replaces content -> click button "Log in" which then redirects
+  const loginBtn = page.locator('button:has-text("Log in")');
+  const loggedIn = page.locator('h3:text-is("day streak")');
+  await Promise.race([loginBtn.waitFor().then(async () => {
+    // offer manual login
     console.error('Not logged in! Will wait for 120s for you to login in the browser or terminal...');
     context.setDefaultTimeout(120 * 1000);
-    // or try automated
+    // and try automated
+    await loginBtn.click();
+    page.getByRole('button', { name: 'Accept cookies' }).click().then(_ => console.log('Accepted cookies')).catch(_ => { });
     page.locator('span:has-text("Switch account")').click().catch(_ => {}); // sometimes no longer logged in, but previous user/email is pre-selected -> in this case we want to go back to the classic login
     const login = page.locator('#root'); // not universal: .content, .nfm-login
     const email = cfg.ae_email || await prompt({ message: 'Enter email' });
@@ -61,21 +65,19 @@ const auth = async url => {
     const password = email && (cfg.ae_password || await prompt({ type: 'password', message: 'Enter password' }));
     await login.locator('input[label="Password"]').fill(password);
     await login.locator('button:has-text("Sign in")').click();
+    // TODO handle failed login
     const error = login.locator('.nfm-login-input-error-text');
     error.waitFor().then(async _ => console.error('Login error (please restart):', await error.innerText())).catch(_ => console.log('No login error.'));
-    await page.waitForURL(u => u.toString().startsWith(url)); // e.g. https://m.aliexpress.com/p/coin-index/index.html?_immersiveMode=true&from=pc302
-    // TODO the following won't be executed anymore due to the navigation - patchright issue?
+    await page.waitForURL(u => u.toString().startsWith('https://www.aliexpress.com/'));
     context.setDefaultTimeout(cfg.debug ? 0 : cfg.timeout);
     console.log('Logged in!'); // this should still be printed, but isn't...
-    // await page.addLocatorHandler(page.getByRole('button', { name: 'Accept cookies' }), btn => btn.click());
-    // page.getByRole('button', { name: 'Accept cookies' }).click().then(_ => console.log('Accepted cookies')).catch(_ => { });
-  }), page.locator('.app-game').waitFor()]);
+  }), loggedIn.waitFor()]); // some alternative element which is only there once logged in
 };
 
 // copied URLs from AliExpress app on tablet which has menu for the used webview
 const urls = {
   // only work with mobile view:
-  coins: 'https://www.aliexpress.com/p/coin-pc-index/index.html',
+  coins: 'https://m.aliexpress.com/p/coin-index/index.html',
   grow: 'https://m.aliexpress.com/p/ae_fruit/index.html', // firefox: stuck at 60% loading, chrome: loads, but canvas
   gogo: 'https://m.aliexpress.com/p/gogo-match-cc/index.html', // closes firefox?!
   // only show notification to install the app
