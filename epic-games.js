@@ -266,7 +266,10 @@ try {
         if (cfg.time) console.timeEnd('claim game');
         continue;
       }
-      if (cfg.interactive && !await confirm()) continue;
+      if (cfg.interactive && !await confirm()) {
+        if (cfg.time) console.timeEnd('claim game');
+        continue;
+      }
 
       // Playwright clicked before button was ready to handle event, https://github.com/vogler/free-games-claimer/issues/84#issuecomment-1474346591
       await iframe.locator('button:has-text("Place Order"):not(:has(.payment-loading--loading))').click({ delay: 11 });
