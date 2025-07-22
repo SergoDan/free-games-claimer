@@ -28,7 +28,8 @@ RUN apt-get update \
       tini \
       nodejs \
       dos2unix \
-      pipx \
+      # use `pip install apprise --break-system-packages` instead of pipx (should be used locally, but we only need one pkg and pipx needs adjustment to $PATH) instead of apt-get's apprise (1.7.2 instead of 1.9.3)
+      pip \
     # RUN npx patchright install-deps chromium
     # ^ installing deps manually instead saved ~130MB:
     && apt-get install -y --no-install-recommends \
@@ -56,7 +57,7 @@ RUN apt-get update \
       /tmp/* \
       /usr/share/doc/* \
     && ln -s /usr/share/novnc/vnc_auto.html /usr/share/novnc/index.html \
-    && pipx install apprise
+    && pip install apprise --break-system-packages
 
 WORKDIR /fgc
 COPY package*.json ./
@@ -97,9 +98,6 @@ ENV DEPTH=24
 
 # Show browser instead of running headless
 ENV SHOW=1
-
-# apprise is installed via pipx, so it is in /root/.local/bin
-ENV PATH="/root/.local/bin:$PATH"
 
 # mega-linter (KICS, Trivy) complained about it missing - usually this checks some API endpoint, for a container that runs ~1min a healthcheck doesn't make that much sense since playwright has timeouts for everything. Could react to SIGUSR1 and check something in JS - for now we just check that node is running and noVNC is reachable...
 HEALTHCHECK --interval=5s --timeout=5s CMD pgrep node && curl --fail http://localhost:6080 || exit 1
