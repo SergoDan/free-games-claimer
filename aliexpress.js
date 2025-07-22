@@ -85,6 +85,7 @@ const urls = {
 
 const coins = async () => {
   console.log('Checking coins...');
+  page.locator('.hideDoubleButton').click().catch(_ => {});
   const collectBtn = page.locator('.signVersion-panel div:has-text("Collect")').first();
   const moreBtn = page.locator('.signVersion-panel div:has-text("Earn more coins")').first();
   await Promise.any([
