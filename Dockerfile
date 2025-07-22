@@ -63,7 +63,7 @@ WORKDIR /fgc
 COPY package*.json ./
 
 # --no-shell to avoid installing chromium_headless_shell (307MB) since headless mode could be detected without patching the browser itself
-RUN npm install && npx patchright install chromium --no-shell && du -h -d1 ~/.cache/ms-playwright
+RUN npm install --ignore-scripts && npx patchright install chromium --no-shell && du -h -d1 ~/.cache/ms-playwright
 
 COPY . .
 
