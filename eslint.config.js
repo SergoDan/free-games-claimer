@@ -39,7 +39,7 @@ export default [
       '@stylistic/comma-spacing': 'error',
       '@stylistic/comma-style': 'error',
       '@stylistic/eol-last': 'error',
-      '@stylistic/func-call-spacing': 'error',
+      '@stylistic/function-call-spacing': 'error',
       '@stylistic/function-paren-newline': ['error', 'consistent'],
       '@stylistic/implicit-arrow-linebreak': 'error',
       '@stylistic/indent': ['error', 2],
