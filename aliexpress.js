@@ -88,7 +88,7 @@ const coins = async () => {
   page.locator('.hideDoubleButton').click().catch(_ => {});
   const collectBtn = page.locator('.signVersion-panel div:has-text("Collect")').first();
   const moreBtn = page.locator('.signVersion-panel div:has-text("Earn more coins")').first();
-  await Promise.any([
+  await Promise.race([
     collectBtn.click().then(_ => console.log('Collected coins for today!')),
     moreBtn.waitFor().then(_ => console.log('No more coins to collect today!')),
   ]); // sometimes did not make it click the collect button... moreBtn.isVisible() as alternative also didn't work
