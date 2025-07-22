@@ -57,7 +57,7 @@ RUN apt-get update \
       /tmp/* \
       /usr/share/doc/* \
     && ln -s /usr/share/novnc/vnc_auto.html /usr/share/novnc/index.html \
-    && pip install apprise --break-system-packages
+    && pip install apprise --break-system-packages --no-cache-dir
 
 WORKDIR /fgc
 COPY package*.json ./
