@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import { dataDir } from './util.js';
 
-dotenv.config({ path: 'data/config.env' }); // loads env vars from file - will not set vars that are already set, i.e., can overwrite values from file by prefixing, e.g., VAR=VAL node ...
+dotenv.config({ path: 'data/config.env', quiet: true }); // loads env vars from file - will not set vars that are already set, i.e., can overwrite values from file by prefixing, e.g., VAR=VAL node ...
 
 // Options - also see table in README.md
 export const cfg = {
