@@ -88,18 +88,21 @@ const urls = {
 const coins = async () => {
   console.log('Checking coins...');
   page.locator('.hideDoubleButton').click().catch(_ => {});
-  const collectBtn = page.locator('.signVersion-panel div:has-text("Collect")').first();
-  const moreBtn = page.locator('.signVersion-panel div:has-text("Earn more coins")').first();
+  const collectBtn = page.locator('button:has-text("Collect")');
+  const moreBtn = page.locator('button:has-text("Earn more coins")');
   await Promise.race([
-    collectBtn.click().then(_ => console.log('Collected coins for today!')),
+    // need force because button is visable and enabled but not stable (changes size)
+    collectBtn.click({ force: true }).then(_ => console.log('Collected coins for today!')),
     moreBtn.waitFor().then(_ => console.log('No more coins to collect today!')),
-  ]); // sometimes did not make it click the collect button... moreBtn.isVisible() as alternative also didn't work
-  // await collectBtn.click().catch(_ => moreBtn.waitFor()); // TODO change this since it's going to delay by timeout if already collected
-  console.log(await page.locator('.marquee-content:has-text(" coins")').first().innerText());
-  const n = (await page.locator('.marquee-item:has-text(" coins")').first().innerText()).replace(' coins', '');
-  console.log('Coins:', n);
-  // console.log('Streak:', await page.locator('.title-box').innerText());
-  // console.log('Tomorrow:', await page.locator('.addcoin').innerText());
+  ]);
+  // print more info
+  const streak = Number(await page.locator('h3:text-is("day streak")').locator('xpath=..').locator('div span').innerText());
+  console.log('Streak (days):', streak);
+  const tomorrow = Number((await page.locator(':text("coins tomorrow")').innerText()).replace(/Get (\d+) check-in coins tomorrow!/, '$1'));
+  console.log('Tomorrow (coins):', tomorrow);
+  // console.log(await page.locator('.marquee-content:has-text(" coins")').first().innerText());
+  const coins = await page.locator(':text("€")').first().innerText(); // TODO get coins value from somewhere (composed of rotating digits in divs...)
+  console.log('Total (coins):', coins);
 };
 
 // const grow = async () => {
