@@ -85,8 +85,27 @@ const urls = {
   merge: 'https://m.aliexpress.com/p/merge-market/index.html',
 };
 
+// need to start to wait for responses from API already before auth()
+const pre_auth = {
+  coins: async _ => {
+    console.log('Checking coins...');
+    let userCoinsNum; // can make this global or pass as arg if needed; for now we just log the value
+    let d; // response data (log in case of exception)
+    // coins are only present as rotating digits in DOM -> no easy way to get value
+    // number of coins are retrieved via POST to https://acs.aliexpress.com/h5/mtop.aliexpress.coin.execute/1.0/?jsv=2.6.1&appKey=...&t=1753253986320&sign=...&api=mtop.aliexpress.coin.execute&v=1.0&post=1&type=originaljson&dataType=jsonp -> .data.data.find(d => d.name == 'userCoinsNum').value
+    // however, there are two requests with same method/URL (usually the first is what we need, but sometimes it comes second) which only differ in the opaque value of the sign URL param
+    await page.waitForResponse(r => r.request().method() == 'POST' && r.url().startsWith('https://acs.aliexpress.com/h5/mtop.aliexpress.coin.execute/')).then(async r => {
+      d = await r.json();
+      d = d.data.data;
+      if (Array.isArray(d))
+        userCoinsNum = d.find(e => e.name == 'userCoinsNum')?.value;
+      console.log('Total (coins):', userCoinsNum);
+    }).catch(e => console.error('Total (coins): error:', e, 'data:', d));
+  }
+}
+
 const coins = async () => {
-  console.log('Checking coins...');
+  console.log('Collecting coins...');
   page.locator('.hideDoubleButton').click().catch(_ => {});
   const collectBtn = page.locator('button:has-text("Collect")');
   const moreBtn = page.locator('button:has-text("Earn more coins")');
@@ -101,8 +120,8 @@ const coins = async () => {
   const tomorrow = Number((await page.locator(':text("coins tomorrow")').innerText()).replace(/Get (\d+) check-in coins tomorrow!/, '$1'));
   console.log('Tomorrow (coins):', tomorrow);
   // console.log(await page.locator('.marquee-content:has-text(" coins")').first().innerText());
-  const coins = await page.locator(':text("€")').first().innerText(); // TODO get coins value from somewhere (composed of rotating digits in divs...)
-  console.log('Total (coins):', coins);
+  const euro = await page.locator(':text("€")').first().innerText(); // TODO get coins value from somewhere (composed of rotating digits in divs...)
+  console.log('Total (€):', euro);
 };
 
 // const grow = async () => {
@@ -130,7 +149,9 @@ try {
     // euro,
     // merge,
   ].reduce((a, f) => a.then(async _ => {
-    await auth(urls[f.name]);
+    const prep = (pre_auth[f.name] ?? (_ => undefined))(); // start to wait for API responses (if needed for f) before anything else
+    await auth(urls[f.name]); // authenticate
+    await prep; // after auth (which goes to right url), need to await, otherwise f may finish before prep is done
     await f();
     console.log();
   }), Promise.resolve());
