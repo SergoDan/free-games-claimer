@@ -97,12 +97,11 @@ const pre_auth = {
     await page.waitForResponse(r => r.request().method() == 'POST' && r.url().startsWith('https://acs.aliexpress.com/h5/mtop.aliexpress.coin.execute/')).then(async r => {
       d = await r.json();
       d = d.data.data;
-      if (Array.isArray(d))
-        userCoinsNum = d.find(e => e.name == 'userCoinsNum')?.value;
+      if (Array.isArray(d)) userCoinsNum = d.find(e => e.name == 'userCoinsNum')?.value;
       console.log('Total (coins):', userCoinsNum);
     }).catch(e => console.error('Total (coins): error:', e, 'data:', d));
-  }
-}
+  },
+};
 
 const coins = async () => {
   console.log('Collecting coins...');
