@@ -61,7 +61,7 @@ jobs:
         # You can override MegaLinter flavor used to have faster performances
         # More info at https://megalinter.io/latest/flavors/
         # uses: oxsecurity/megalinter@v8 # default (127 linters)
-        uses: oxsecurity/megalinter/flavors/cupcake@beta # most common, was recommended in output (88 linters)
+        uses: oxsecurity/megalinter/flavors/cupcake@beta # most common, was recommended in output (88 linters); switched from v8.7.0 to beta for new features
 
         id: ml
 
@@ -201,9 +201,9 @@ jobs:
           category: mega-linter
 
       # https://github.blog/news-insights/product-news/supercharging-github-actions-with-job-summaries/
-      - name: Add job summary
-        if: success() || failure()
-        run: cat "megalinter-reports/megalinter-report.md" >> "$GITHUB_STEP_SUMMARY"
-      # above should be handled by the MARKDOWN_SUMMARY_REPORTER itself after https://github.com/oxsecurity/megalinter/issues/1489, but did not work
+      # - name: Add job summary
+      #   if: success() || failure()
+      #   run: cat "megalinter-reports/megalinter-report.md" >> "$GITHUB_STEP_SUMMARY"
+      # the above is now handled by the MARKDOWN_SUMMARY_REPORTER itself after https://github.com/oxsecurity/megalinter/issues/1489 (available in beta)
 
       # logs and artifacts are retained for 90 days, workflow run history is retained for 400 days... https://docs.github.com/en/actions/administering-github-actions/usage-limits-billing-and-administration#artifact-and-log-retention-policy
