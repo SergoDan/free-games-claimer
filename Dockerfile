@@ -45,6 +45,7 @@ RUN apt-get update \
       libpango-1.0-0 \
       libcairo2 \
       libasound2t64 \
+      libxfixes3 \
       # needed for TurboVNC if not installing xfce4:
       libxdamage1 \ 
     && apt-get autoremove -y \
