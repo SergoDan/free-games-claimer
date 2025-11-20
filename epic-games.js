@@ -6,7 +6,7 @@ import path from 'path';
 import { existsSync, writeFileSync } from 'fs';
 import { resolve, jsonDb, datetime, filenamify, prompt, confirm, notify, html_game_list, handleSIGINT } from './src/util.js';
 import { cfg } from './src/config.js';
-import { getGames } from './src/epic-games-mobile.js';
+import { getMobileGames } from './src/epic-games-mobile.js';
 
 const screenshot = (...a) => resolve(cfg.dir.screenshots, 'epic-games', ...a);
 
@@ -153,7 +153,7 @@ try {
   // https://egs-platform-service.store.epicgames.com/api/v2/public/discover/home?count=10&country=DE&locale=en&platform=android&start=0&store=EGS
   if (cfg.eg_mobile) {
     console.log('Including mobile games...');
-    const mobileGames = await getGames();
+    const mobileGames = await getMobileGames(context);
     urls.push(...mobileGames.map(x => x.url));
   }
 

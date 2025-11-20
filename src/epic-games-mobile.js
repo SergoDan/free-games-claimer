@@ -1,8 +1,9 @@
 // following https://github.com/vogler/free-games-claimer/issues/474
 
-const get = async (platform = 'android') => { // or ios
-  const r = await fetch(`https://egs-platform-service.store.epicgames.com/api/v2/public/discover/home?count=10&country=DE&locale=en&platform=${platform}&start=0&store=EGS`);
-  return await r.json();
+const get = async (page, platform = 'android') => { // or ios
+  await page.goto(`https://egs-platform-service.store.epicgames.com/api/v2/public/discover/home?count=10&country=DE&locale=en&platform=${platform}&start=0&store=EGS`);
+  const response = await page.innerText('body');
+  return JSON.parse(response);
 };
 
 // $ jq '.data[].topicId' -r
@@ -35,8 +36,8 @@ const get = async (platform = 'android') => { // or ios
 
 const url = s => `https://store.epicgames.com/en-US/p/${s}`;
 
-export const getPlatformGames = async platform => {
-  const json = await get(platform);
+export const getPlatformGames = async (page, platform) => {
+  const json = await get(page, platform);
   const free_game = json.data.filter(x => x.type == 'freeGame')[0];
   // console.log(free_game);
   return free_game.offers.map(offer => {
@@ -46,6 +47,11 @@ export const getPlatformGames = async platform => {
   });
 };
 
-export const getGames = async () => [...await getPlatformGames('android'), ...await getPlatformGames('ios')];
+export const getMobileGames = async (context) => {
+  const page = await context.newPage();
+  const r = [...await getPlatformGames(page, 'android'), ...await getPlatformGames(page, 'ios')];
+  await page.close();
+  return r;
+};
 
 // console.log(await getGames());
