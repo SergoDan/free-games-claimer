@@ -161,6 +161,10 @@ try {
 
   for (const url of urls) {
     if (cfg.time) console.time('claim game');
+    if (db.data[user][url.split('/').pop()]?.status == 'claimed') {
+      console.log('Already claimed, skipping:', url);
+      continue;
+    }
     await page.goto(url); // , { waitUntil: 'domcontentloaded' });
     // when loading, the button text is empty -> need to wait for some text {'get', 'in library', 'requires base game'} -> just wait for e or i to not be too specific; :text-matches("\w+") somehow didn't work - https://github.com/vogler/free-games-claimer/issues/375
     // was using locator('...').first().waitFor(), but that at some point led to exception locator.waitFor: Error: Can't query n-th element
