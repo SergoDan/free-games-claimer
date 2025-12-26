@@ -164,6 +164,7 @@ try {
     if (cfg.time) console.time('claim game');
     if (db.data[user][url.split('/').pop()]?.status == 'claimed') {
       console.log('Already claimed, skipping:', url);
+      if (cfg.time) console.timeEnd('claim game');
       continue;
     }
     await page.goto(url); // , { waitUntil: 'domcontentloaded' });
@@ -328,13 +329,13 @@ try {
     }
     if (cfg.time) console.timeEnd('claim game');
   }
-  if (cfg.time) console.timeEnd('claim all games');
 } catch (error) {
   process.exitCode ||= 1;
   console.error('--- Exception:');
   console.error(error); // .toString()?
   if (error.message && process.exitCode != 130) notify(`epic-games failed: ${error.message.split('\n')[0]}`);
 } finally {
+  if (cfg.time) console.timeEnd('claim all games');
   await db.write(); // write out json db
   if (notify_games.filter(g => g.status == 'claimed' || g.status == 'failed').length) { // don't notify if all have status 'existed', 'manual', 'requires base game', 'unavailable-in-region', 'skipped'
     notify(`epic-games (${user}):<br>${html_game_list(notify_games)}`);
