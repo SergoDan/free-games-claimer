@@ -173,7 +173,7 @@ try {
     await page.waitForFunction(
       () => {
         const btn = document.querySelector('button[data-testid="purchase-cta-button"]');
-        return btn && btn.textContent && /[ei]/i.test(btn.textContent);
+        return btn && /[ei]/i.test(btn.textContent) && btn.textContent != 'Loading';
       }
     );
     const purchaseBtn = page.locator('button[data-testid="purchase-cta-button"]').first();
