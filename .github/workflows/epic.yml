@@ -13,4 +13,4 @@ jobs:
             -e EG_EMAIL="${{ secrets.EG_EMAIL }}" \
             -e EG_PASSWORD="${{ secrets.EG_PASSWORD }}" \
             -e EG_OTP="${{ secrets.EG_OTP }}" \
-            ghcr.io/vogler/free-games-claimer node epic-games.js --no-vnc --skip-launcher-update
+            ghcr.io/vogler/free-games-claimer node epic-games.js --no-vnc --skip-launcher-update --timeout 600 --width 1920 --height 1080
