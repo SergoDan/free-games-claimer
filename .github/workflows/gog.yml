@@ -1,0 +1,16 @@
+name: GOG Games
+on:
+  workflow_dispatch:
+
+jobs:
+  claim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run GOG Claimer
+        run: |
+          docker run --rm \
+            -e GOG_EMAIL="${{ secrets.GOG_EMAIL }}" \
+            -e GOG_PASSWORD="${{ secrets.GOG_PASSWORD }}" \
+            -e GOG_OTP="${{ secrets.GOG_OTP }}" \
+            ghcr.io/vogler/free-games-claimer gog --no-vnc
