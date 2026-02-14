@@ -15,4 +15,4 @@ jobs:
           -e EG_EMAIL="${{ secrets.EG_EMAIL }}" \
           -e EG_PASSWORD="${{ secrets.EG_PASSWORD }}" \
           -v $(pwd)/data:/claimer/data \
-          ghcr.io/vogler/free-games-claimer fgc epicgames --no-vnc
+          ghcr.io/vogler/free-games-claimer node /claimer/out/index.js epicgames --no-vnc
