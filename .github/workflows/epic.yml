@@ -12,8 +12,7 @@ jobs:
       - name: Run Claimer
         run: |
           docker run --rm \
-          --entrypoint node \
           -e EG_EMAIL="${{ secrets.EG_EMAIL }}" \
           -e EG_PASSWORD="${{ secrets.EG_PASSWORD }}" \
           -v $(pwd)/data:/claimer/data \
-          ghcr.io/vogler/free-games-claimer out/index.js epicgames --no-vnc
+          ghcr.io/vogler/free-games-claimer epicgames --no-vnc
