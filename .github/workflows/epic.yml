@@ -1,18 +1,17 @@
 name: Epic Games
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 18 * * *"
 
 jobs:
   claim:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run Claimer
+      - name: List and Run
         run: |
+          docker run --rm ghcr.io/vogler/free-games-claimer ls -F
+          echo "--- Starting Claimer ---"
           docker run --rm \
           -e EG_EMAIL="${{ secrets.EG_EMAIL }}" \
           -e EG_PASSWORD="${{ secrets.EG_PASSWORD }}" \
-          -v $(pwd)/data:/claimer/data \
-          ghcr.io/vogler/free-games-claimer npm start epicgames -- --no-vnc
+          ghcr.io/vogler/free-games-claimer epicgames --no-vnc
