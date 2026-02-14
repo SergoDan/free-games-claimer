@@ -10,6 +10,7 @@ jobs:
       - name: Run Claimer
         run: |
           docker run --rm \
-          -e EG_EMAIL="${{ secrets.EG_EMAIL }}" \
-          -e EG_PASSWORD="${{ secrets.EG_PASSWORD }}" \
-          ghcr.io/vogler/free-games-claimer node epic-games.js --no-vnc --skip-launcher-update
+            -e EG_EMAIL="${{ secrets.EG_EMAIL }}" \
+            -e EG_PASSWORD="${{ secrets.EG_PASSWORD }}" \
+            -e EG_OTP="${{ secrets.EG_OTP }}" \
+            ghcr.io/vogler/free-games-claimer node epic-games.js --no-vnc --skip-launcher-update
