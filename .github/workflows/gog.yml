@@ -13,4 +13,4 @@ jobs:
             -e GOG_EMAIL="${{ secrets.GOG_EMAIL }}" \
             -e GOG_PASSWORD="${{ secrets.GOG_PASSWORD }}" \
             -e GOG_OTP="${{ secrets.GOG_OTP }}" \
-            ghcr.io/vogler/free-games-claimer gog --no-vnc
+            ghcr.io/vogler/free-games-claimer node gog.js --no-vnc
