@@ -7,11 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: List and Run
+      - name: Run Claimer
         run: |
-          docker run --rm ghcr.io/vogler/free-games-claimer ls -F
-          echo "--- Starting Claimer ---"
           docker run --rm \
           -e EG_EMAIL="${{ secrets.EG_EMAIL }}" \
           -e EG_PASSWORD="${{ secrets.EG_PASSWORD }}" \
-          ghcr.io/vogler/free-games-claimer epicgames --no-vnc
+          ghcr.io/vogler/free-games-claimer node epic-games.js --no-vnc
